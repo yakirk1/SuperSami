@@ -13,16 +13,17 @@ productLink.addEventListener('click',() =>{
 });
 //close product modal
 productModal.addEventListener('click', (e)=>{
-  console.log("check close product 0");
-  if(e.target.classList.contains('new-prodcut')){
-    console.log("check close product");
+  if(e.target.classList.contains('new-product')){
     productModal.classList.remove('open');
+    productForm.reset();
+
   }
 });
 // close request modal
 requestModal.addEventListener('click', (e) => {
   if (e.target.classList.contains('new-request')) {
     requestModal.classList.remove('open');
+
   }
 });
 
@@ -52,7 +53,10 @@ requestForm.addEventListener('submit', (e) => {
     name: productForm.product_name.value,
     manufacturer: productForm.product_manufacturer.value,
     amount: productForm.product_amount.value,
-    price: productForm.product_price.value
+    price: productForm.product_price.value,
+    kashrut: productForm.product_isKosher.value,
+    category: productForm.product_category.value,
+    expiryDate: productForm.product_expiryDate.value
 })
    .then(() =>{
      productForm.reset();

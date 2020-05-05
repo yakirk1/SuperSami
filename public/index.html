@@ -48,8 +48,6 @@
           <input type="text" name="product_isKosher" placeholder="Kashrut...">
           <input type="text" name="product_category" placeholder="category...">
           <input type="text" name="product_expiryDate" placeholder="expiryDate...">
-          <input type="text" name="product_picture" placeholder="select picture url">
-
           <button>Submit Product</button>
            <p class="error"></p>
         </form>
@@ -97,10 +95,9 @@
             {{"Manufacturer = "+product.manufacturer}} <br>
             {{"Amount = "+product.amount}} <br>
             {{"Price= "+product.price}} <br>
-            {{"Kashrut="+product.product_isKosher" }} <br>
-            {{"Category="+product.category" }} <br>
-            {{"Expiration Date="+product.expiryDate" }} <br>
-           <img src=
+            {{"Kashrut="+product.kashrut }} <br>
+            {{"Category="+product.category }} <br>
+            {{"Expiration Date="+product.expiryDate }} <br>
           </p>
         </li>
       </ul>

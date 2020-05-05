@@ -43,6 +43,38 @@ exports.addRequest = functions.https.onCall((data, context) => {
     );
 });
 });
+//add new product
+exports.addProduct = functions.https.onCall((data, context) => {
+  console.log("in addProduct cloud function");
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated', 
+      'only authenticated users can add products'
+    );
+  }
+  if (data.name.length > 10) {
+      throw new functions.https.HttpsError(
+      'invalid-argument', 
+      'request must be no more than 30 characters long'
+    );
+  }
+  return admin.firestore().collection('products').add({
+    name: data.name,
+    manufacturer: data.manufacturer,
+    amount: data.amount,
+    price: data.price,
+    kashrut: data.kashrut,
+    category: data.category,
+    expiryDate: data.expiryDate
+}).then(() => {
+    return 'new product added';
+}).catch(() => {
+    throw new functions.https.HttpsError(
+        'internal',
+        'product not added'
+    );
+});
+});
 
 // // upvote callable function
 exports.upvote = functions.https.onCall(async (data, context) => {
@@ -76,21 +108,7 @@ exports.upvote = functions.https.onCall(async (data, context) => {
   });
 
 });
-//add new product
-exports.addProduct = functions.https.onCall((data,context)=>{
-  if(!context.auth){
-    throw new functions.https.HttpsError(
-      'unauthenticated',
-      'only authenticated users can add products'
-    );
-  }
-  return admin.firestore().collection('products').add({
-    name: data.name,
-    manufacturer: data.manufacturer,
-    amount: data.amount,
-    price : data.price
-  })
-});
+
 // firestore trigger for tracking activity
 exports.logActivities = functions.firestore.document('/{collection}/{id}')
   .onCreate((snap, context) => {

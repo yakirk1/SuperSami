@@ -11,7 +11,6 @@ var app1 = new Vue({
         snapshot.forEach(doc => {
           products.push({...doc.data(), id: doc.id});
         });
-        console.log(products[0].amount);
         this.products = products;
       });
     }
