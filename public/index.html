@@ -3,10 +3,36 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tutorial Requests</title>
+    <title>SuperSami</title>
     <!-- stylesheets -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+      }
+      
+      li {
+        float: left;
+      }
+      
+      li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+      
+      li a:hover {
+        background-color: #111;
+        cursor:pointer;
+      }
+      </style>
   </head>
   <body>
 
@@ -29,6 +55,8 @@
         <form class="register">
           <input type="text" name="email" placeholder="Email">
           <input type="password" name="password" placeholder="Password">
+          <label for="checkbox">Student?</label><br>
+          <input type="checkbox" name="checkbox" id="checkbox">
           <button>Register</button>
           <p class="error"></p>
         </form>
@@ -44,7 +72,7 @@
           <input type="text" name="product_name" placeholder="name...">
            <input type="text" name="product_manufacturer" placeholder="manufacturer...">
           <input type="text" name="product_amount" placeholder="amount...">
-          <input type="text" name="product_price" placeholder="price...">
+          <input type="number" name="product_price" placeholder="price...">
           <input type="text" name="product_isKosher" placeholder="Kashrut...">
           <input type="text" name="product_category" placeholder="category...">
           <input type="text" name="product_expiryDate" placeholder="expiryDate...">
@@ -53,42 +81,71 @@
         </form>
       </div>
      </div>
-         <!-- new request modal -->
-    <div class="new-request">
-      <div class="modal">
-        <h2>Request a Tutorial</h2>
-        <form>
-          <input type="text" name="request" placeholder="Request...">
+ <!-- new product modal -->
+ <div class="new-product">
+  <div class="modal">
+    <h2>Add a new product</h2>
+   <form>
+     <input type="text" name="product_name" placeholder="name...">
+      <input type="text" name="product_manufacturer" placeholder="manufacturer...">
+     <input type="text" name="product_amount" placeholder="amount...">
+     <input type="number" name="product_price" placeholder="price...">
+     <input type="text" name="product_isKosher" placeholder="Kashrut...">
+     <input type="text" name="product_category" placeholder="category...">
+     <input type="text" name="product_expiryDate" placeholder="expiryDate...">
+     <button>Submit Product</button>
+      <p class="error"></p>
+   </form>
+ </div>
+</div>
+ <!-- new product modal -->
+ <div class="account-details">
+  <div class="modal">
+    <h2>Account Details</h2>
+   <form>
 
-          <button>Submit Request</button>
-          <p class="error"></p>
-        </form>
-      </div>
-    </div>
+      <p class="error"></p>
+   </form>
+ </div>
+</div>
+
+    <!--
     <header>
       <nav>
-        <a class="add-product">add product</a>
-        <a class="add-request">add request</a>
-        <a class="sign-out">sign out</a>
+           <a class="deliveries admin" style="display:none;"> Deliveries</a> 
+           <a class="transactions admin" style="display:none;"> Transactions</a> 
+           <a class="add-product admin" style="display:none;">Add Product</a> 
+           <a class="checkout user" style="display:block;"> Checkout</a> 
+           <a class="sign-out">Sign out</a> 
       </nav>
     </header>
+    -->
+    
+        <ul>
+          <button>
+            <li id="homePage" onclick="location.reload()"> <a class="home"> Home</a> </li>
+          </button>
+          <li class="admin" style="display:none;"><a class="deliveries"> Deliveries</a> </li>
+          <li class="admin" style="display:none;"><a class="transactions"> Transactions</a> </li>
+          <li class="admin" style="display:none;"><a class="add-product">Add Product</a> </li>
+          <li class="user" style="display:block;"> <a class="checkout"> Checkout</a> </li> 
+          <li style="float:right;"> <a class="sign-out">Sign out</a> </li>
+          <li data-target="modal-account"> <a class="account-info">Account info</a> </li>
 
-    <section class="content" id="app">
-      <h1>Tutorial Requests</h1>
-      <ul class="request-list"> 
-        <li v-for="request in requests">
-          <span class="text">{{ request.text }}</span>
-          <div>
-            <span class="votes">{{ request.upvotes }}</span>
-            <i class="material-icons upvote" v-on:click="upvoteRequest(request.id)">arrow_upward</i>
-          </div>
-        </li>
-      </ul>
-    </section>
+        </ul>
+   
+    <div id="modal-account" class="modal" style="display:none;">
+      <div class="modal-content center-align">
+        <h4>Account Details</h4><br />
+        <div class="account-details" style="display:none;"></div>
+      </div>
+    </div>
+
+
 
     <section class="content" id="app1">
       <h1>Products</h1>
-      <ul class="product-list"> 
+      <ul class="product-list" style="display:inline;"> 
         <li v-for="product in products">
           <p class="text">
             {{"Name = "+product.name}} <br>
@@ -101,17 +158,41 @@
           </p>
         </li>
       </ul>
-    </section>
+
+
+      <div style="margin-right:auto; flex-direction:row;">      
+      <select id="sort">
+        <option value="manufacturer" selected>Manufacturer</option>
+        <option value="category">Category</option>
+        <option value="name">Name</option>
+        <option value="price">Price</option>
+      </select>
+        <button type="button" v-on:click="sortBy()">Sort By</button>
+
+        <select id="filter">
+          <option value="manufacturer" selected>Manufacturer</option>
+          <option value="category">Category</option>
+          <option value="name">Name</option>
+          <option value="price">Price</option>
+
+        </select>
+          
+          <button type="button" v-on:click="filterBy()">Filter By</button>
+          <input type="text" name="filter" id="filterText" placeholder="Enter filter criteria" style="width:30%;">
+          <p class="errorDisplay"> </p>
+        </div>
+   </section>
+
     <!-- vue js -->
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
-    <!-- update the version number as needed -->
+    <!-- firebase base model -->
     <script src="/__/firebase/7.7.0/firebase-app.js"></script>
-    <!-- include only the Firebase features as you need -->
+    <!-- firebase features -->
     <script src="/__/firebase/7.7.0/firebase-auth.js"></script>
     <script src="/__/firebase/7.7.0/firebase-firestore.js"></script>
     <script src="/__/firebase/7.7.0/firebase-functions.js"></script>
-    <!-- initialize the SDK after all desired features are loaded -->
+    <!-- initialize SDK  -->
     <script src="/__/firebase/init.js"></script>
 
     <script src="js/app.js"></script>

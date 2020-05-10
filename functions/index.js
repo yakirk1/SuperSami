@@ -1,15 +1,21 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
-//admin.auth().setCustomUserClaims("JPJ2ViiY1sectuQaORpnh8aCix73", {admin: true})
-// auth trigger (new user signup)
-exports.newUserSignUp = functions.auth.user().onCreate(user => {
-  // for background triggers you must return a value/promise
-  return admin.firestore().collection('users').doc(user.uid).set({
-    email: user.email,
-    upvotedOn: [],
-  });
+
+exports.addAdminRole= functions.https.onCall((data,context)=>{
+  return admin.auth().getUserByEmail(data.email).then(user => {
+    return admin.auth().setCustomUserClaims(user.uid,{
+      admin: true
+    });
+}).then(() => {
+  return {
+    message :`Sucess, ${data.email} is an admin`
+  }
+}).catch(err =>{
+    return err;
 });
+});
+
 
 // auth trigger (user deleted)
 exports.userDeleted = functions.auth.user().onDelete(user => {
@@ -17,32 +23,6 @@ exports.userDeleted = functions.auth.user().onDelete(user => {
   return doc.delete();
 });
 
-// http callable function (adding a request)
-exports.addRequest = functions.https.onCall((data, context) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated', 
-      'only authenticated users can add requests'
-    );
-  }
-  if (data.text.length > 30) {
-    throw new functions.https.HttpsError(
-      'invalid-argument', 
-      'request must be no more than 30 characters long'
-    );
-  }
-  return admin.firestore().collection('requests').add({
-    text: data.text,
-    upvotes: 0
-}).then(() => {
-    return 'new request added';
-}).catch(() => {
-    throw new functions.https.HttpsError(
-        'internal',
-        'request not added'
-    );
-});
-});
 //add new product
 exports.addProduct = functions.https.onCall((data, context) => {
   console.log("in addProduct cloud function");
@@ -55,7 +35,7 @@ exports.addProduct = functions.https.onCall((data, context) => {
   if (data.name.length > 10) {
       throw new functions.https.HttpsError(
       'invalid-argument', 
-      'request must be no more than 30 characters long'
+      'product name must be no more than 10 characters long'
     );
   }
   return admin.firestore().collection('products').add({
@@ -76,7 +56,29 @@ exports.addProduct = functions.https.onCall((data, context) => {
 });
 });
 
+exports.ourNewUserSignUp = functions.https.onCall((data, context) => {
+  console.log(data.user);
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated'
+          );
+  }
+  return admin.firestore().collection('users').doc(data.user).set({
+    email: data.email,
+    password: data.password,
+    isStudent:data.isStudent
+  }).then(() => {
+    return 'user added';
+}).catch(() => {
+    throw new functions.https.HttpsError(
+        'internal',
+        'user not added'
+    );
+});
+});
+
 // // upvote callable function
+/*
 exports.upvote = functions.https.onCall(async (data, context) => {
   // check auth state
   if (!context.auth) {
@@ -108,6 +110,7 @@ exports.upvote = functions.https.onCall(async (data, context) => {
   });
 
 });
+*/
 
 // firestore trigger for tracking activity
 exports.logActivities = functions.firestore.document('/{collection}/{id}')
@@ -116,10 +119,6 @@ exports.logActivities = functions.firestore.document('/{collection}/{id}')
 
     const activities = admin.firestore().collection('activities');
     const collection = context.params.collection;
-
-    if (collection === 'requests') {
-      return activities.add({ text: 'a new tutorial request was added' });
-    }
     if (collection === 'users') {
       return activities.add({ text: 'a new user signed up'});
     }

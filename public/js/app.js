@@ -1,13 +1,20 @@
-const requestModal = document.querySelector('.new-request');
-const requestLink = document.querySelector('.add-request');
-const requestForm = document.querySelector('.new-request form');
 const productModal = document.querySelector('.new-product');
 const productLink = document.querySelector('.add-product');
 const productForm = document.querySelector('.new-product form');
-// open request modal
-requestLink.addEventListener('click', () => {
-  requestModal.classList.add('open');
+const homePage = document.getElementById("homePage");
+const home = document.querySelector('.home');
+
+home.addEventListener('click', (e) =>{
+  homePage.classList.add('clicked');
 });
+
+homePage.addEventListener('click', (e) =>{
+  if(e.target.classList.contains('clicked')){
+    console.log("?");
+
+  }
+});
+
 productLink.addEventListener('click',() =>{
   productModal.classList.add('open');
 });
@@ -19,31 +26,7 @@ productModal.addEventListener('click', (e)=>{
 
   }
 });
-// close request modal
-requestModal.addEventListener('click', (e) => {
-  if (e.target.classList.contains('new-request')) {
-    requestModal.classList.remove('open');
 
-  }
-});
-
-// add a new request
-requestForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const addRequest = firebase.functions().httpsCallable('addRequest');
-  addRequest({ 
-    text: requestForm.request.value 
-  })
-  .then(() => {
-    requestForm.reset();
-    requestForm.querySelector('.error').textContent = '';
-    requestModal.classList.remove('open');
-  })
-  .catch(error => {
-    requestForm.querySelector('.error').textContent = error.message;
-  });
-});
 //add a new product
  productForm.addEventListener('submit', (e)=>{
    e.preventDefault();
@@ -53,7 +36,7 @@ requestForm.addEventListener('submit', (e) => {
     name: productForm.product_name.value,
     manufacturer: productForm.product_manufacturer.value,
     amount: productForm.product_amount.value,
-    price: productForm.product_price.value,
+    price: Number(productForm.product_price.value),
     kashrut: productForm.product_isKosher.value,
     category: productForm.product_category.value,
     expiryDate: productForm.product_expiryDate.value
