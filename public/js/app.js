@@ -3,7 +3,12 @@ const productLink = document.querySelector('.add-product');
 const productForm = document.querySelector('.new-product form');
 const homePage = document.getElementById("homePage");
 const home = document.querySelector('.home');
-
+const addToCart= document.getElementById("add-to-cart");
+console.log(addToCart);
+addToCart.onclick = function(){
+  var amount = document.getElementById("amount");
+  console.log(amount);
+}
 home.addEventListener('click', (e) =>{
   homePage.classList.add('clicked');
 });

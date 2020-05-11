@@ -126,18 +126,31 @@ signOut.addEventListener('click', () => {
 
 // auth listener
 firebase.auth().onAuthStateChanged(user => {
+  var status;
+    var ref = firebase.firestore().collection('users');
+    ref.onSnapshot(snapshot => {
+      let myuser = [];
+      snapshot.forEach(doc => {
+        if(doc.id==user.uid)
+        myuser.push({...doc.data(), id: doc.id});
+      });
+      status = myuser[0].isStudent;
+      console.log(status);
+
+    });
+    console.log(status);
+  //const getStudentStatus = firebase.functions().httpsCallable('getStudentStatus');
   if (user) {
-    
-    const html= `
-    <div>Logged in as ${user.email}</div>
-    `;
-   // if(html!=null)
-      
-      accountInfoLink.innerHTML =html;
-    
+    //var myStatus=2;
+    //var myUser={user:user};
+    //getStudentStatus(myUser).then(val =>{
+      //console.log("???");
+     // myStatus=val;
+    //console.log(myStatus);
     user.getIdTokenResult().then(getIdTokenResult => {
       user.admin= getIdTokenResult.claims.admin;
       if(user.admin){
+        InfoLink.innerHTML = 'Admin';
         console.log(getIdTokenResult.claims.admin);
         adminElements.forEach(item => item.style.display ='block');
       }
@@ -145,8 +158,19 @@ firebase.auth().onAuthStateChanged(user => {
         //accountInfoLink.classList.style.display ='none';
         //accountInfoLink.innerHTML =""
         adminElements.forEach(item => item.style.display ='none');
-      }
-
+    if(user.isStudent){
+    const html= `
+    <div>Student</div>
+    `;
+      
+      InfoLink.innerHTML =html;
+    }
+    else {
+      //var check=firebase.auth().currentUser;
+      //console.log(myStatus, 'check if works');
+      InfoLink.innerHTML="Regular user";
+    }
+  }
     authWrapper.classList.remove('open');
     
     authModals.forEach(modal => modal.classList.remove('active'));

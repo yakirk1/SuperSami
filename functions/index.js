@@ -17,6 +17,10 @@ exports.addAdminRole= functions.https.onCall((data,context)=>{
 });
 
 
+exports.getStudentStatus= functions.https.onCall((data,context)=>{ 
+  return admin.firestore().collection('users').doc(data.user.uid).isStudent;
+}
+);
 // auth trigger (user deleted)
 exports.userDeleted = functions.auth.user().onDelete(user => {
   const doc = admin.firestore().collection('users').doc(user.uid);
