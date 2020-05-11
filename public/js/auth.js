@@ -126,7 +126,9 @@ signOut.addEventListener('click', () => {
 
 // auth listener
 firebase.auth().onAuthStateChanged(user => {
-  var status;
+  //const getStudentStatus = firebase.functions().httpsCallable('getStudentStatus');
+  if (user) {
+    var status;
     var ref = firebase.firestore().collection('users');
     ref.onSnapshot(snapshot => {
       let myuser = [];
@@ -135,12 +137,10 @@ firebase.auth().onAuthStateChanged(user => {
         myuser.push({...doc.data(), id: doc.id});
       });
       status = myuser[0].isStudent;
-      console.log(status);
+          console.log(status);
 
     });
     console.log(status);
-  //const getStudentStatus = firebase.functions().httpsCallable('getStudentStatus');
-  if (user) {
     //var myStatus=2;
     //var myUser={user:user};
     //getStudentStatus(myUser).then(val =>{
@@ -153,11 +153,16 @@ firebase.auth().onAuthStateChanged(user => {
         InfoLink.innerHTML = 'Admin';
         console.log(getIdTokenResult.claims.admin);
         adminElements.forEach(item => item.style.display ='block');
+        userElements.forEach(item => item.style.display ='none');
+
       }
       else{
+
         //accountInfoLink.classList.style.display ='none';
         //accountInfoLink.innerHTML =""
         adminElements.forEach(item => item.style.display ='none');
+        userElements.forEach(item => item.style.display ='block');
+
     if(user.isStudent){
     const html= `
     <div>Student</div>

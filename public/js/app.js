@@ -1,14 +1,40 @@
 const productModal = document.querySelector('.new-product');
 const productLink = document.querySelector('.add-product');
+//const addToCart = document.querySelector('.add-to-cart');
 const productForm = document.querySelector('.new-product form');
 const homePage = document.getElementById("homePage");
 const home = document.querySelector('.home');
-const addToCart= document.getElementById("add-to-cart");
-console.log(addToCart);
-addToCart.onclick = function(){
-  var amount = document.getElementById("amount");
-  console.log(amount);
-}
+const amount = document.getElementById('.amount');
+const checkoutLink = document.querySelector('.checkout');
+const checkoutModal = document.querySelector('.checkoutForm');
+const checkoutForm = document.querySelector('.checkoutForm form');
+
+
+
+
+checkoutLink.addEventListener('click',() =>{
+  console.log("22");
+  checkoutModal.style.display ='block';
+  checkoutModal.classList.add('open');
+});
+//close product modal
+checkoutModal.addEventListener('click', (e)=>{
+  if(e.target.classList.contains('.checkoutModal')){
+    checkoutModal.classList.remove('open');
+    checkoutForm.reset();
+
+  }
+});
+
+ checkoutForm.addEventListener('submit', (e)=>{
+   console.log("?");
+ });
+/*
+addToCart.addEventListener("click",(e)=>{
+      e.preventDefault();
+      console.log(1);
+});
+*/
 home.addEventListener('click', (e) =>{
   homePage.classList.add('clicked');
 });

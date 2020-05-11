@@ -107,6 +107,9 @@ header a:hover{
 .new-product.open{
   display: block;
 }
+.checkoutForm.open{
+  display: block;
+}
 /* form element styles */
 input{
   display: block;

@@ -14,8 +14,8 @@ var app1 = new Vue({
       ref.onSnapshot(snapshot => {
         let products = [];
         snapshot.forEach(doc => {
+          if(doc.data().amount>0)
           products.push({...doc.data(), id: doc.id});
-          console.log(doc.data().category);
         });
         this.products = products;
       });
@@ -29,7 +29,9 @@ var app1 = new Vue({
     ref.onSnapshot(snapshot => {
       let products = [];
       snapshot.forEach(doc => {
-        if((result=="category" && doc.data().category==filterText) ||(result=="name" && doc.data().name ==filterText)|| (result=="manufacturer" && filterText==doc.data().manufacturer) || (result == "price" && Number(filterText) > Number(doc.data().price))){
+        if((result=="category" && doc.data().category==filterText) ||(result=="name" && doc.data().name ==filterText)|| (result=="manufacturer" && filterText==doc.data().manufacturer) || (result == "price" && Number(filterText) > Number(doc.data().price)))
+        {
+          if(doc.data().amount>0)
           products.push({...doc.data(), id: doc.id});
         }
       });
@@ -49,6 +51,7 @@ var app1 = new Vue({
       ref.onSnapshot(snapshot => {
         let products = [];
         snapshot.forEach(doc => {
+          if(doc.data().amount>0)
           products.push({...doc.data(), id: doc.id});
         });
         this.products = products;

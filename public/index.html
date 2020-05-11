@@ -80,26 +80,24 @@
         </form>
       </div>
      </div>
- <!-- new product modal -->
- <div class="new-product">
-  <div class="modal">
-    <h2>Add a new product</h2>
-   <form>
-     <input type="text" name="product_name" placeholder="name...">
-      <input type="text" name="product_manufacturer" placeholder="manufacturer...">
-     <input type="text" name="product_amount" placeholder="amount...">
-     <input type="number" name="product_price" placeholder="price...">
-     <input type="text" name="product_isKosher" placeholder="Kashrut...">
-     <input type="text" name="product_category" placeholder="category...">
-     <input type="text" name="product_expiryDate" placeholder="expiryDate...">
-     <button>Submit Product</button>
-      <p class="error"></p>
-   </form>
- </div>
-</div>
+ 
  <!-- new product modal -->
 
 
+
+
+
+ 
+    <!-- new product modal -->
+    <div class="checkoutForm" style="display:none;">
+      <div class="modal">
+        <h2>Checkout</h2>
+       <form>
+         
+          <p class="error"></p>
+       </form>
+     </div>
+    </div>
 
  <div class="account-details" style="display:none">
   <div class="modal">
@@ -130,12 +128,12 @@
           <li class="admin" style="display:none;"><a class="deliveries"> Deliveries</a> </li>
           <li class="admin" style="display:none;"><a class="transactions"> Transactions</a> </li>
           <li class="admin" style="display:none;"><a class="add-product">Add Product</a> </li>
-          <li class="user" style="display:block;"> <a class="checkout"> Checkout</a> </li> 
+          <li class="user"> <a class="checkout"> Checkout</a> </li> 
           <li style="float:right;"> <a class="sign-out">Sign out</a> </li>
           <li> <a class="account-info">Account info</a> </li>
 
         </ul>
-
+    
     <section class="content" id="app1">
       <h1>Products</h1>
       <ul class="product-list" style="display:inline;"> 
@@ -149,12 +147,21 @@
             {{"Category="+product.category }} <br>
             {{"Expiration Date="+product.expiryDate }} <br>
             <input type="number" name="amount" id="amount" placeholder="amount...">
-            <button type="button" class="add-to-cart" id="add-to-cart">Add to Cart</button>
-
+            <button type="button" class="add-to-cart" id={{product.name}} onclick="addToCart()">Add to Cart</button>
           </p>
         </li>
       </ul>
 
+      <script>
+
+      function addToCart(){
+
+        console.log()
+        console.log(amount.value);
+      }
+
+
+      </script>
 
       <div style="margin-right:auto; flex-direction:row;">      
       <select id="sort">
