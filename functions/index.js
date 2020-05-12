@@ -59,7 +59,8 @@ exports.addProduct = functions.https.onCall((data, context) => {
     price: data.price,
     kashrut: data.kashrut,
     category: data.category,
-    expiryDate: data.expiryDate
+    expiryDate: data.expiryDate,
+    url: data.url
 }).then(() => {
     return 'new product added';
 }).catch(() => {
@@ -117,7 +118,8 @@ exports.ourNewUserSignUp = functions.https.onCall((data, context) => {
   return admin.firestore().collection('users').doc(data.user).set({
     email: data.email,
     password: data.password,
-    isStudent:data.isStudent
+    isStudent:data.isStudent,
+    url:data.url
   }).then(() => {
     return 'user added';
 }).catch(() => {
@@ -129,8 +131,7 @@ exports.ourNewUserSignUp = functions.https.onCall((data, context) => {
 });
 
 
-exports.addToCart = functions.https.onCall((data, context) => {
-  console.log(data.user);
+exports.addToCart = functions.https.onCall((data) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       'unauthenticated'
@@ -138,8 +139,8 @@ exports.addToCart = functions.https.onCall((data, context) => {
   }
   let myCurrentCart = firestore().collection('carts').doc(data.uid).mycart;
   console.log(myCurrentCart);
-  return admin.firestore().collection('carts').doc(data.uid).set({
-    check: l
+  return admin.firestore().collection('carts').doc(data.uid).add({
+    check: data.check
   }).then(() => {
     return 'cart added';
 }).catch(() => {
@@ -149,6 +150,7 @@ exports.addToCart = functions.https.onCall((data, context) => {
     );
 });
 });
+
 // // upvote callable function
 /*
 exports.upvote = functions.https.onCall(async (data, context) => {
@@ -199,3 +201,4 @@ exports.logActivities = functions.firestore.document('/{collection}/{id}')
     }
     return null;
 });
+

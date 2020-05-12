@@ -56,8 +56,8 @@
           <input type="password" name="password" placeholder="Password">
           <label for="checkbox">Student?</label><br>
           <input type="checkbox" name="checkbox" id="checkbox">
-          <label for="img">Select image:</label>
-          <input type="file" id="img" name="img" accept="image/*">
+          <label id="urlTextInsert" style="display:none;" for="img">Select image url:</label>
+          <input type="text" name="student_pic_url" id="student_pic_url" placeholder="url..." style="display:none;">
           <button>Register</button>
           <p class="error"></p>
         </form>
@@ -77,6 +77,7 @@
           <input type="text" name="product_isKosher" placeholder="Kashrut...">
           <input type="text" name="product_category" placeholder="category...">
           <input type="text" name="product_expiryDate" placeholder="expiryDate...">
+          <input type="text" name="product_url" placeholder="url...">
           <button>Submit Product</button>
            <p class="error"></p>
         </form>
@@ -148,6 +149,7 @@
             {{"Kashrut="+product.kashrut }} <br>
             {{"Category="+product.category }} <br>
             {{"Expiration Date="+product.expiryDate }} <br>
+            <img :src="product.url" alt="Snow" style="width:100%;max-width:300px">
             <input type="number" class="amount" :id="product.name" placeholder="amount...">
             <button type="button" class="add-to-cart" :id="product.name" :onclick=`addToCart("${product.name}")`
             >Add to Cart</button>
@@ -158,22 +160,26 @@
       <script>
 
       function addToCart(str1){
+        addToCart = firebase.functions().httpsCallable('addToCart');
+        addToCart({check: 1}).then(() => { console.log('x');
+        }).catch(() => { });
+        /*
         const ref = firebase.firestore().collection('carts');
         const userUID=firebase.auth().currentUser.uid;
-
         var check = document.getElementById(str1);
         console.log(check.value);
         ref.onSnapshot(snapshot => {
       let carts = [];
       snapshot.forEach(doc => {
-        if(doc.id==user.uid)
-        myuser.push({...doc.data(), id: doc.id});
+        if(doc.id==userUID)
+        carts.push({...doc.data(), id: doc.id});
       });
-      status = myuser[0].isStudent;
+      status = carts[0].mycart;
+      if(status === 'undefined'){}
           console.log(status);
+      
 
     });
-        console.log(myCurrentCart, "my cart");
        console.log("uid is ", userUID);
        console.log("before addToCartCloud");
        const addToCart= firebase.functions().httpsCallable('addToCart');
@@ -182,6 +188,7 @@
        .then( () =>{
          console.log("????");
        })
+       */
       }
 
 
@@ -220,6 +227,8 @@
     <script src="/__/firebase/7.7.0/firebase-auth.js"></script>
     <script src="/__/firebase/7.7.0/firebase-firestore.js"></script>
     <script src="/__/firebase/7.7.0/firebase-functions.js"></script>
+    <script src="/__/firebase/7.7.0/firebase-storage.js"></script>
+
     <!-- initialize SDK  -->
     <script src="/__/firebase/init.js"></script>
 

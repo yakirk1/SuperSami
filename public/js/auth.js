@@ -8,7 +8,20 @@ const adminElements = document.querySelectorAll('.admin');
 const userElements = document.querySelectorAll('.user');
 const accountInfoLink = document.querySelector('.modal-account');
 const InfoLink =document.querySelector('.account-info');
+const checkBox = document.getElementById("checkbox");
+const url=document.getElementById("student_pic_url");
+const textInsert=document.getElementById("urlTextInsert");
 
+
+checkBox.addEventListener('change', function() {
+  if(this.checked) {
+      url.style.display ='block';
+      textInsert.style.display ='block';
+  } else {
+    url.style.display ='none';
+    textInsert.style.display ='none';
+  }
+});
 
  function isEmailValid(email){
    console.log(email);
@@ -68,8 +81,8 @@ registerForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const email = registerForm.email.value;
   const password = registerForm.password.value;
-  const checkBox = document.getElementById("checkbox");
-
+  checkBox.addEventListener
+  console.log(url.value);
   try{
   if(isEmailValid(email) == true && isPassValid(password)==true){
     firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -79,7 +92,8 @@ registerForm.addEventListener('submit', (e) => {
         user:user.user.uid,
         email:email,
         password:password,
-        isStudent:checkBox.checked
+        isStudent:checkBox.checked,
+        url:url.value
       })
       .then(() =>{
         console.log('registered', user);
@@ -94,8 +108,7 @@ registerForm.addEventListener('submit', (e) => {
   }
 } catch(error){
   registerForm.querySelector('.error').textContent = error;
-}
-})
+}})
 
 // login form
 loginForm.addEventListener('submit', (e) => {
@@ -136,11 +149,11 @@ firebase.auth().onAuthStateChanged(user => {
         if(doc.id==user.uid)
         myuser.push({...doc.data(), id: doc.id});
       });
-      status = myuser[0].isStudent;
-          console.log(status);
+     // status = myuser[0].isStudent;
+    //      console.log(status);
 
     });
-    console.log(status);
+    //console.log(status);
     //var myStatus=2;
     //var myUser={user:user};
     //getStudentStatus(myUser).then(val =>{

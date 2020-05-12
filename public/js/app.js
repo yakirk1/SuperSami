@@ -70,7 +70,8 @@ productModal.addEventListener('click', (e)=>{
     price: Number(productForm.product_price.value),
     kashrut: productForm.product_isKosher.value,
     category: productForm.product_category.value,
-    expiryDate: productForm.product_expiryDate.value
+    expiryDate: productForm.product_expiryDate.value,
+    url: productForm.product_url.value
 })
    .then(() =>{
      productForm.reset();
