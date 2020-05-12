@@ -70,6 +70,43 @@ exports.addProduct = functions.https.onCall((data, context) => {
 });
 });
 
+/*
+//add new product
+exports.addToCart = functions.https.onCall((data, context) => {
+  console.log(data.uid);
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated', 
+      'only authenticated users can add products to cart'
+    );
+  }
+  const ref = firebase.firestore().collection('carts');
+  ref.onSnapshot(snapshot => {
+    let carts = [];
+    console.log(data.uid);
+    snapshot.forEach(doc => {
+      if(doc.data().uid===data.uid)
+      carts.push({...doc.data(), id:doc.id});
+    });
+    console.log(carts);
+    return admin.firestore().collection('carts').add({
+      name: data.name,
+      manufacturer: data.manufacturer,
+      amount: data.amount,
+      price: data.price,
+      kashrut: data.kashrut,
+      category: data.category,
+      expiryDate: data.expiryDate
+  }).then(() => {
+      return 'new product added';
+  }).catch(() => {
+      throw new functions.https.HttpsError(
+          'internal',
+          'product not added'
+      );
+  });
+  });
+*/
 exports.ourNewUserSignUp = functions.https.onCall((data, context) => {
   console.log(data.user);
   if (!context.auth) {
@@ -91,6 +128,27 @@ exports.ourNewUserSignUp = functions.https.onCall((data, context) => {
 });
 });
 
+
+exports.addToCart = functions.https.onCall((data, context) => {
+  console.log(data.user);
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated'
+          );
+  }
+  let myCurrentCart = firestore().collection('carts').doc(data.uid).mycart;
+  console.log(myCurrentCart);
+  return admin.firestore().collection('carts').doc(data.uid).set({
+    check: l
+  }).then(() => {
+    return 'cart added';
+}).catch(() => {
+    throw new functions.https.HttpsError(
+        'internal',
+        'cart not added'
+    );
+});
+});
 // // upvote callable function
 /*
 exports.upvote = functions.https.onCall(async (data, context) => {

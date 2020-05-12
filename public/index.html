@@ -148,8 +148,9 @@
             {{"Kashrut="+product.kashrut }} <br>
             {{"Category="+product.category }} <br>
             {{"Expiration Date="+product.expiryDate }} <br>
-            <input type="number" name="amount" :id="" placeholder="amount...">
-            <button type="button" class="add-to-cart" :id="product.name" :onclick=`addToCart(${product.name})`>Add to Cart</button>
+            <input type="number" class="amount" :id="product.name" placeholder="amount...">
+            <button type="button" class="add-to-cart" :id="product.name" :onclick=`addToCart("${product.name}")`
+            >Add to Cart</button>
           </p>
         </li>
       </ul>
@@ -157,12 +158,32 @@
       <script>
 
       function addToCart(str1){
-        console.log(str1);
-        var check=document.getElementById("Bamba");
-        console.log(check);
-        const str = `bla bla bla ${check}`
-        //console.log(amount.value);
+        const ref = firebase.firestore().collection('carts');
+        const userUID=firebase.auth().currentUser.uid;
+
+        var check = document.getElementById(str1);
+        console.log(check.value);
+        ref.onSnapshot(snapshot => {
+      let carts = [];
+      snapshot.forEach(doc => {
+        if(doc.id==user.uid)
+        myuser.push({...doc.data(), id: doc.id});
+      });
+      status = myuser[0].isStudent;
+          console.log(status);
+
+    });
+        console.log(myCurrentCart, "my cart");
+       console.log("uid is ", userUID);
+       console.log("before addToCartCloud");
+       const addToCart= firebase.functions().httpsCallable('addToCart');
+       console.log({uid:userUID});
+       addToCart({uid:userUID})
+       .then( () =>{
+         console.log("????");
+       })
       }
+
 
 
       </script>
