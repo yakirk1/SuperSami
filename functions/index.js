@@ -17,10 +17,20 @@ exports.addAdminRole= functions.https.onCall((data,context)=>{
 });
 
 
-exports.getStudentStatus= functions.https.onCall((data,context)=>{ 
-  return admin.firestore().collection('users').doc(data.user.uid).isStudent;
-}
-);
+exports.getStudentStatus = functions.https.onCall((data,context)=>{
+  return admin.auth().getUserByEmail(data.email).then(user => {
+    return admin.auth().setCustomUserClaims(user.uid,{
+      admin: true
+    });
+}).then(() => {
+  return {
+    message :`Sucess, ${data.email} is an admin`
+  }
+}).catch(err =>{
+    return err;
+});
+});
+
 // auth trigger (user deleted)
 exports.userDeleted = functions.auth.user().onDelete(user => {
   const doc = admin.firestore().collection('users').doc(user.uid);

@@ -56,6 +56,8 @@
           <input type="password" name="password" placeholder="Password">
           <label for="checkbox">Student?</label><br>
           <input type="checkbox" name="checkbox" id="checkbox">
+          <label for="img">Select image:</label>
+          <input type="file" id="img" name="img" accept="image/*">
           <button>Register</button>
           <p class="error"></p>
         </form>
@@ -146,18 +148,20 @@
             {{"Kashrut="+product.kashrut }} <br>
             {{"Category="+product.category }} <br>
             {{"Expiration Date="+product.expiryDate }} <br>
-            <input type="number" name="amount" id="amount" placeholder="amount...">
-            <button type="button" class="add-to-cart" id={{product.name}} onclick="addToCart()">Add to Cart</button>
+            <input type="number" name="amount" :id="" placeholder="amount...">
+            <button type="button" class="add-to-cart" :id="product.name" :onclick=`addToCart(${product.name})`>Add to Cart</button>
           </p>
         </li>
       </ul>
 
       <script>
 
-      function addToCart(){
-
-        console.log()
-        console.log(amount.value);
+      function addToCart(str1){
+        console.log(str1);
+        var check=document.getElementById("Bamba");
+        console.log(check);
+        const str = `bla bla bla ${check}`
+        //console.log(amount.value);
       }
 
 
