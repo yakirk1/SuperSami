@@ -81,7 +81,6 @@ registerForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const email = registerForm.email.value;
   const password = registerForm.password.value;
-  checkBox.addEventListener
   console.log(url.value);
   try{
   if(isEmailValid(email) == true && isPassValid(password)==true){
@@ -92,7 +91,7 @@ registerForm.addEventListener('submit', (e) => {
         user:user.user.uid,
         email:email,
         password:password,
-        isStudent:checkBox.checked,
+        isStudent:false,
         url:url.value
       })
       .then(() =>{
@@ -139,7 +138,7 @@ signOut.addEventListener('click', () => {
 
 // auth listener
 firebase.auth().onAuthStateChanged(user => {
-  //const getStudentStatus = firebase.functions().httpsCallable('getStudentStatus');
+  const getStudentStatus = firebase.functions().httpsCallable('getStudentStatus');
   if (user) {
     var status;
     var ref = firebase.firestore().collection('users');
@@ -149,11 +148,11 @@ firebase.auth().onAuthStateChanged(user => {
         if(doc.id==user.uid)
         myuser.push({...doc.data(), id: doc.id});
       });
-     // status = myuser[0].isStudent;
-    //      console.log(status);
+      status = myuser[0].isStudent;
+         console.log(status);
 
     });
-    //console.log(status);
+    console.log(status);
     //var myStatus=2;
     //var myUser={user:user};
     //getStudentStatus(myUser).then(val =>{

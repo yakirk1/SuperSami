@@ -202,3 +202,52 @@ exports.logActivities = functions.firestore.document('/{collection}/{id}')
     return null;
 });
 
+
+exports.setStudentApproval = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated'
+    );
+  }
+  
+  const userProfile =  await admin.auth().getUserByEmail(data.email);
+  try {
+  const result =await  admin.firestore().collection('users').doc(userProfile.uid).update({isStudent:true});
+    return "updated";
+  /*.set({
+      email: userProfile.email,
+      password: userProfile.password,
+      isStudent: true,
+      url: userProfile.url
+    })
+    */
+  } catch(e){
+    throw e
+    // throw new functions.https.HttpsError(
+    //   'internal',
+    //   'approval not changed'
+    // );
+  }
+    
+  //return 'aprroval changed';
+
+
+  // return admin.auth().getUserByEmail(data.email).then(user => {
+  //   // eslint-disable-next-line promise/no-nesting
+  //   return admin.firestore().collection('users').doc(user.uid).set({
+  //     email: user.email,
+  //     password: user.password,
+  //     isStudent: true,
+  //     url: user.url
+  //   }).then(() => {
+  //     return "changed";
+  //   })
+  // }).then(() => {
+  //   return 'aprroval changed';
+  // }).catch(() => {
+  //   throw new functions.https.HttpsError(
+  //     'internal',
+  //     'approval not changed'
+  //   );
+  // });
+});

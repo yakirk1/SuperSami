@@ -84,14 +84,44 @@
       </div>
      </div>
  
- <!-- new product modal -->
+ <!-- approve modal -->
+ <div class="approve-modal">
+  <div class="modal" style="width: 400px;
+  padding: 30px;
+  margin: 100px auto;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0px 0px 8px rgba(0,0,0,0.1);
+  text-align: center;">
+   <form>
+    <section class="content" id="app2">
+      <h1>Approval Requests</h1>
+      <div id="container" style="max-height:200px; overflow-y: auto;">
+      <ul class="approval-request-list" style="display:inline;"> 
+        <li v-for="approval in approvals">
+          <p class="text">
+            {{"Email = "+approval.email}} <br>
+            <img :src="approval.url" style="width:150px ;height:100px"> <br>
+            <input type="checkbox" name="approveCheckbox" :id="approval.email" :onclick=`updateApproveDict("${approval.email}")`>
+          </p>
+        </li>
+      </ul>
+      </div>
+<script>
+</script>
+     <button id="approve-submit">Submit Approvals</button>
+      <!--<button>Submit Disapprovals</button> -->
 
+      <p class="error"></p>
+   </form>
+ </div>
+</div>
 
 
 
 
  
-    <!-- new product modal -->
+    <!-- checkout modal -->
     <div class="checkoutForm" style="display:none;">
       <div class="modal">
         <h2>Checkout</h2>
@@ -131,6 +161,7 @@
           <li class="admin" style="display:none;"><a class="deliveries"> Deliveries</a> </li>
           <li class="admin" style="display:none;"><a class="transactions"> Transactions</a> </li>
           <li class="admin" style="display:none;"><a class="add-product">Add Product</a> </li>
+          <li class="admin" style="display:none;"><a class="approve-student">Approve Student</a> </li>
           <li class="user"> <a class="checkout"> Checkout</a> </li> 
           <li style="float:right;"> <a class="sign-out">Sign out</a> </li>
           <li> <a class="account-info">Account info</a> </li>
@@ -157,43 +188,6 @@
         </li>
       </ul>
 
-      <script>
-
-      function addToCart(str1){
-        addToCart = firebase.functions().httpsCallable('addToCart');
-        addToCart({check: 1}).then(() => { console.log('x');
-        }).catch(() => { });
-        /*
-        const ref = firebase.firestore().collection('carts');
-        const userUID=firebase.auth().currentUser.uid;
-        var check = document.getElementById(str1);
-        console.log(check.value);
-        ref.onSnapshot(snapshot => {
-      let carts = [];
-      snapshot.forEach(doc => {
-        if(doc.id==userUID)
-        carts.push({...doc.data(), id: doc.id});
-      });
-      status = carts[0].mycart;
-      if(status === 'undefined'){}
-          console.log(status);
-      
-
-    });
-       console.log("uid is ", userUID);
-       console.log("before addToCartCloud");
-       const addToCart= firebase.functions().httpsCallable('addToCart');
-       console.log({uid:userUID});
-       addToCart({uid:userUID})
-       .then( () =>{
-         console.log("????");
-       })
-       */
-      }
-
-
-
-      </script>
 
       <div style="margin-right:auto; flex-direction:row;">      
       <select id="sort">
@@ -235,5 +229,7 @@
     <script src="js/app.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/products.js"></script>
+    <script src="js/approve.js"></script>
+
   </body>
 </html>
