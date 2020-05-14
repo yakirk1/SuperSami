@@ -109,28 +109,47 @@
       </div>
 <script>
 </script>
-     <button id="approve-submit">Submit Approvals</button>
+      <input type="submit" value="submitApprove" onclick="return submitForm(this)" />
+      <input type="submit" value="submitDisapprove" onclick="return submitForm(this)" />
       <!--<button>Submit Disapprovals</button> -->
 
       <p class="error"></p>
    </form>
  </div>
 </div>
-
-
-
-
  
     <!-- checkout modal -->
-    <div class="checkoutForm" style="display:none;">
-      <div class="modal">
-        <h2>Checkout</h2>
+    <div class="checkout-modal">
+      <div class="modal" style="width: 400px;
+      padding: 30px;
+      margin: 100px auto;
+      border-radius: 10px;
+      background: white;
+      box-shadow: 0px 0px 8px rgba(0,0,0,0.1);
+      text-align: center;">
        <form>
-         
-          <p class="error"></p>
-       </form>
-     </div>
+        <section class="content" id="app3">
+          <h1>Checkout</h1>
+          <div id="container" style="max-height:200px; overflow-y: auto;">
+            <ul class="cart-list" style="display:inline;"> 
+              <li v-for="cart in products">
+                <p class="text">
+                  {{ "Name: " +cart.Name}} <br>
+                  {{ "Amount: " +cart.Amount}} <br>
+                  
+                </p>
+              </li>
+            </ul>
+            <p class="totalPrice">
+              
+            </p>
+            </div>
+          </section>
+          </form>
+          </div>
     </div>
+
+
 
  <div class="account-details" style="display:none">
   <div class="modal">
@@ -180,7 +199,7 @@
             {{"Kashrut="+product.kashrut }} <br>
             {{"Category="+product.category }} <br>
             {{"Expiration Date="+product.expiryDate }} <br>
-            <img :src="product.url" alt="Snow" style="width:100%;max-width:300px">
+            <img :src="product.url" alt="Snow" style="width:150px ;height:100px">
             <input type="number" class="amount" :id="product.name" placeholder="amount...">
             <button type="button" class="add-to-cart" :id="product.name" :onclick=`addToCart("${product.name}")`
             >Add to Cart</button>
@@ -222,7 +241,7 @@
     <script src="/__/firebase/7.7.0/firebase-firestore.js"></script>
     <script src="/__/firebase/7.7.0/firebase-functions.js"></script>
     <script src="/__/firebase/7.7.0/firebase-storage.js"></script>
-
+    <script src="jquery-3.5.1.min.js"></script>
     <!-- initialize SDK  -->
     <script src="/__/firebase/init.js"></script>
 
@@ -230,6 +249,8 @@
     <script src="js/auth.js"></script>
     <script src="js/products.js"></script>
     <script src="js/approve.js"></script>
+    <script src="js/checkout.js"></script>
+
 
   </body>
 </html>

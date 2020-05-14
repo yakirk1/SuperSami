@@ -1,6 +1,19 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyCCODva5jiR0t4E28rtk1zmoXsY59BsAMw",
+  authDomain: "supersami-76ae9.firebaseapp.com",
+  databaseURL: "https://supersami-76ae9.firebaseio.com",
+  projectId: "supersami-76ae9",
+  storageBucket: "supersami-76ae9.appspot.com",
+  messagingSenderId: "227496892156",
+  appId: "1:227496892156:web:ac3465e56eea4d0b392979",
+  measurementId: "G-44L8XEJG2Y"
+};
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const firebase = require("firebase");
+firebase.initializeApp(firebaseConfig);
 admin.initializeApp();
+
 
 exports.addAdminRole= functions.https.onCall((data,context)=>{
   return admin.auth().getUserByEmail(data.email).then(user => {
@@ -130,27 +143,6 @@ exports.ourNewUserSignUp = functions.https.onCall((data, context) => {
 });
 });
 
-
-exports.addToCart = functions.https.onCall((data) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated'
-          );
-  }
-  let myCurrentCart = firestore().collection('carts').doc(data.uid).mycart;
-  console.log(myCurrentCart);
-  return admin.firestore().collection('carts').doc(data.uid).add({
-    check: data.check
-  }).then(() => {
-    return 'cart added';
-}).catch(() => {
-    throw new functions.https.HttpsError(
-        'internal',
-        'cart not added'
-    );
-});
-});
-
 // // upvote callable function
 /*
 exports.upvote = functions.https.onCall(async (data, context) => {
@@ -214,40 +206,72 @@ exports.setStudentApproval = functions.https.onCall(async (data, context) => {
   try {
   const result =await  admin.firestore().collection('users').doc(userProfile.uid).update({isStudent:true});
     return "updated";
-  /*.set({
-      email: userProfile.email,
-      password: userProfile.password,
-      isStudent: true,
-      url: userProfile.url
-    })
-    */
   } catch(e){
     throw e
-    // throw new functions.https.HttpsError(
-    //   'internal',
-    //   'approval not changed'
-    // );
   }
-    
-  //return 'aprroval changed';
-
-
-  // return admin.auth().getUserByEmail(data.email).then(user => {
-  //   // eslint-disable-next-line promise/no-nesting
-  //   return admin.firestore().collection('users').doc(user.uid).set({
-  //     email: user.email,
-  //     password: user.password,
-  //     isStudent: true,
-  //     url: user.url
-  //   }).then(() => {
-  //     return "changed";
-  //   })
-  // }).then(() => {
-  //   return 'aprroval changed';
-  // }).catch(() => {
-  //   throw new functions.https.HttpsError(
-  //     'internal',
-  //     'approval not changed'
-  //   );
-  // });
 });
+
+/*
+exports.setStudentDisapproval = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated'
+    );
+  }
+  
+  const userProfile =  await admin.auth().getUserByEmail(data.email);
+  try {
+  const result =await  admin.firestore().collection('users').doc(userProfile.uid).update({url:""});
+    return "updated";
+  } catch(e){
+    throw e
+  }
+});
+/*
+exports.addToCart = functions.https.onCall((data) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated'
+          );
+  }
+  let myCurrentCart = firestore().collection('carts').doc(data.uid).mycart;
+  console.log(myCurrentCart);
+  return admin.firestore().collection('carts').doc(data.uid).add({
+    check: data.check
+  }).then(() => {
+    return 'cart added';
+}).catch(() => {
+    throw new functions.https.HttpsError(
+        'internal',
+        'cart not added'
+    );
+});
+});
+*/
+
+exports.addToCart = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated'
+    );
+  }
+  try {
+    const result =await  admin.firestore().collection('carts').doc(data.uid).update({mycart:data.mycart});
+      return "updated";
+    } catch(e){
+      throw e
+    }
+  });
+  
+  exports.addNewCart = functions.https.onCall((data,context) =>{
+
+    return admin.firestore().collection('carts').doc(data.uid).set({
+      mycart:data.mycart
+    }).then(() => {
+      return 'new cart added';
+  }).catch(() => {
+      throw new functions.https.HttpsError(
+          'cart not added'
+      );
+  });
+  });

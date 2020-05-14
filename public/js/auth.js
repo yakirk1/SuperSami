@@ -149,10 +149,10 @@ firebase.auth().onAuthStateChanged(user => {
         myuser.push({...doc.data(), id: doc.id});
       });
       status = myuser[0].isStudent;
-         console.log(status);
+        // console.log(status);
 
     });
-    console.log(status);
+    //console.log(status);
     //var myStatus=2;
     //var myUser={user:user};
     //getStudentStatus(myUser).then(val =>{

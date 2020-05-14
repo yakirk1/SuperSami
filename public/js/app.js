@@ -6,40 +6,78 @@ const homePage = document.getElementById("homePage");
 const home = document.querySelector('.home');
 const amount = document.getElementById('.amount');
 const checkoutLink = document.querySelector('.checkout');
-const checkoutModal = document.querySelector('.checkoutForm');
-const checkoutForm = document.querySelector('.checkoutForm form');
+const checkoutModal = document.querySelector('.checkout-modal');
+const checkoutForm = document.querySelector('.checkout-modal form');
 const approveLink = document.querySelector('.approve-student');
 const approveModal = document.querySelector('.approve-modal');
 const approveForm = document.querySelector('.approve-modal form');
-const submitApprove = document.getElementById('approve-submit');
+
+//const submitApprove = document.querySelector('.approvesubmit');
+//const submitDisapprove = document.querySelector('.disapprovesubmit');
 var approvalDict ={};
 
-submitApprove.addEventListener('click', (e)=>{
-  e.preventDefault();
+function submitForm (button)
+{
+  if (button.value == "Find")
+  {
+    /* open popup */
+    find();
+  }
+  else if (button.value == "Add")
+  {
+    /* stay in the same window */
+  } 
+
+  return false;
+}
+
+approveForm.addEventListener('submit', (e)=>{
+  var action = document.getElementsByName('action-submit');
+  console.log(action[0].value);
+  e.preventDefault(); 
   console.log("?????????");
-  const setStudentApproval = firebase.functions().httpsCallable('setStudentApproval');
+  if ($_POST['action'] == 'submitApprove') {
+    const setStudentApproval = firebase.functions().httpsCallable('setStudentApproval');
   console.log(approvalDict);
+  
   for(var key in approvalDict){
     if(approvalDict[key]==true){
-      console.log({email:key});
-      console.log(setStudentApproval);
       setStudentApproval({email:key}).then((data)=>{
         console.log(data, "did it work");
         approveForm.reset();
         approveModal.classList.remove('open');
-        approvalDict={};
      
-      })
-    }}
-    })
+      });
+    }
+    }
+    approvalDict={};
+} else if ($_POST['action'] == 'submitDisapprove') {
+    e.preventDefault();
+    console.log("?????????");
+    const setStudentDisapproval = firebase.functions().httpsCallable('setStudentDisapproval');
+    console.log(approvalDict);
+    for(var key in approvalDict){
+      if(approvalDict[key]==true){
+        setStudentDisapproval({email:key}).then((data)=>{
+          console.log(data, "did it work");
+          approveForm.reset();
+          approveModal.classList.remove('open');
+       
+        });
+      }
+      }
+      approvalDict={};
+    }
+  })
+      
+  
+    
 checkoutLink.addEventListener('click',() =>{
-  console.log("22");
-  checkoutModal.style.display ='block';
   checkoutModal.classList.add('open');
 });
 //close product modal
 checkoutModal.addEventListener('click', (e)=>{
-  if(e.target.classList.contains('.checkoutModal')){
+  if(e.target.classList.contains('checkout-modal')){
     checkoutModal.classList.remove('open');
     checkoutForm.reset();
 
@@ -160,11 +198,69 @@ function updateApproveDict(email){
 
 }
 function addToCart(str1){
-  console.log("wtf");
-  /*
-  addToCart = firebase.functions().httpsCallable('addToCart');
-  addToCart({check: 1}).then(() => { console.log('x');
-  }).catch(() => { });
+  const addToMyCart = firebase.functions().httpsCallable('addToCart');
+  const addNewCart = firebase.functions().httpsCallable('addNewCart');
+
+  const userUID=firebase.auth().currentUser.uid;
+  console.log(userUID);
+  var amount = document.getElementById(str1);
+  const carts = firebase.firestore().collection('carts');
+  var wtf=false;
+ // console.log(carts.doc(userUID));
+  let mycarts = [];
+      carts.onSnapshot(snapshot => {
+        snapshot.forEach(doc => {
+        if(doc.id ==userUID &&wtf==false){
+          wtf=true;
+          mycarts.push({...doc.data(), id: doc.id});
+          if(!(str1 in mycarts[0].mycart)){
+            console.log("in if");
+            mycarts[0].mycart[str1] = Number(amount.value);
+            
+          }
+          else{
+            console.log("in else");
+            mycarts[0].mycart[str1] =Number(mycarts[0].mycart[str1]) + Number(amount.value);
+
+          }
+          addToMyCart({uid:userUID,mycart:mycarts[0].mycart}).then(data =>{
+            console.log(data,"check");
+            amount.value="";
+          })
+          return;
+        }
+        return;
+      }
+        
+        
+        );
+        if(wtf==false){
+          wtf=true;
+          console.log("7");
+          var dict ={};
+          dict[str1]=Number(amount.value);
+          console.log(dict);
+          addNewCart({uid:userUID,mycart:dict}).then(data =>{
+            console.log(data,"check");
+            amount.value="";
+
+           
+          })
+          
+        }
+      });
+    
+      /*
+      console.log({uid:userUID,mycart:mycarts[0].mycart});
+      const addToMyCart = firebase.functions().httpsCallable('addToCart');
+      addToMyCart({uid:userUID,mycart:mycarts[0].mycart}).then(data =>{
+        console.log(data,"check");
+      })
+      */
+
+//function wtf(data){
+  //console.log(data);
+}
   /*
   const ref = firebase.firestore().collection('carts');
   const userUID=firebase.auth().currentUser.uid;
@@ -191,4 +287,25 @@ if(status === 'undefined'){}
    console.log("????");
  })
  */
-}
+/*
+ function checkValidAmount(prodName){
+   var check=false;
+  var amount = document.getElementById(prodName);
+  const prodAmount = firebase.firestore().collection('products');
+  prodAmount.onSnapshot(snapshot => {
+    snapshot.forEach(doc => {
+      if(doc.data().name==prodName){
+        if(Number(doc.data().amount)<Number(amount.value)){
+          check=true;
+          console.log("error");
+          return false;
+        }
+      }
+    })})
+    if(check==false)
+    {
+      addTo
+    }
+    
+  }
+*/
