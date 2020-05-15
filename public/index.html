@@ -140,9 +140,24 @@
                 </p>
               </li>
             </ul>
-            <p class="totalPrice">
-              
+            <p class="totalPrice">           
             </p>
+            <input type="text" name="firstname" placeholder="First name...">
+            <input type="text" name="lastname" placeholder="Last name...">
+            <input type="text" name="address" placeholder="Address...">
+            <input type="text" name="checkoutemail" placeholder="Email...">
+            <div style="margin-right:auto; flex-direction:row;">      
+              <select id="cards">
+                <option value="isracard" selected>Isracard</option>
+                <option value="leumi">Leumi Card</option>
+
+              </select>
+              <input type="text" name="ownerid" placeholder="ID of card owner...">
+              <input type="text" name="ownername" placeholder="Owner first name...">
+              <input type="text" name="cardnumber" placeholder="Card number...">
+              <input type="text" name="cvc" placeholder="CVC...">
+              <input type="text" name="expirydate" placeholder="Expiry date...">
+              <button type="button" onclick="addTransactions()">Finish</button>
             </div>
           </section>
           </form>

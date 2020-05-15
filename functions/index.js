@@ -13,6 +13,7 @@ const admin = require('firebase-admin');
 const firebase = require("firebase");
 firebase.initializeApp(firebaseConfig);
 admin.initializeApp();
+var db= firebase.firestore();
 
 
 exports.addAdminRole= functions.https.onCall((data,context)=>{
@@ -49,6 +50,11 @@ exports.userDeleted = functions.auth.user().onDelete(user => {
   const doc = admin.firestore().collection('users').doc(user.uid);
   return doc.delete();
 });
+
+exports.emptyCart = functions.https.onCall((data,context)=>{
+  return db.collection('carts').doc(data.uid).delete();
+
+})
 
 //add new product
 exports.addProduct = functions.https.onCall((data, context) => {
@@ -275,3 +281,49 @@ exports.addToCart = functions.https.onCall(async (data, context) => {
       );
   });
   });
+
+
+  exports.addTransaction = functions.https.onCall((data,context)=>{
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated', 
+      'only authenticated users can add products'
+    );
+  }
+  return admin.firestore().collection('transactions').add({
+    mycart:data.mycart,
+    firstname:data.firstname ,
+    lastname: data.lastname,
+    address: data.address,
+    email: data.email,
+    cardtype:data.cardtype ,
+    ownerid: data.ownerid,
+    ownername: data.ownername,
+    cardnumber:data.cardnumber,
+    cvc: data.cvc,
+    expirydate: data.expirydate,
+    delivered:false,
+    totalPrice:data.totalPrice
+}).then(() => {
+    return 'new transaction added';
+}).catch(() => {
+    throw new functions.https.HttpsError(
+        'transaction not added'
+    );
+});
+});
+
+
+exports.updateStock = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated'
+    );
+  }
+  try {
+  const result =await  admin.firestore().collection('products').doc(data.id).update({amount:data.amount});
+    return "updated";
+  } catch(e){
+    throw e
+  }
+});

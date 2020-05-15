@@ -205,14 +205,15 @@ function addToCart(str1){
   console.log(userUID);
   var amount = document.getElementById(str1);
   const carts = firebase.firestore().collection('carts');
-  var wtf=false;
+  var check=false;
  // console.log(carts.doc(userUID));
   let mycarts = [];
       carts.onSnapshot(snapshot => {
         snapshot.forEach(doc => {
-        if(doc.id ==userUID &&wtf==false){
-          wtf=true;
+        if(doc.id ==userUID &&check==false){
+          check=true;
           mycarts.push({...doc.data(), id: doc.id});
+          if(typeof mycarts[0]!= 'undefined'){
           if(!(str1 in mycarts[0].mycart)){
             console.log("in if");
             mycarts[0].mycart[str1] = Number(amount.value);
@@ -223,6 +224,7 @@ function addToCart(str1){
             mycarts[0].mycart[str1] =Number(mycarts[0].mycart[str1]) + Number(amount.value);
 
           }
+        }
           addToMyCart({uid:userUID,mycart:mycarts[0].mycart}).then(data =>{
             console.log(data,"check");
             amount.value="";
@@ -234,8 +236,8 @@ function addToCart(str1){
         
         
         );
-        if(wtf==false){
-          wtf=true;
+        if(check==false){
+          check=true;
           console.log("7");
           var dict ={};
           dict[str1]=Number(amount.value);
@@ -309,3 +311,87 @@ if(status === 'undefined'){}
     
   }
 */
+function addTransactions(){
+  const addTransaction = firebase.functions().httpsCallable('addTransaction');
+  const emptyCart = firebase.functions().httpsCallable('emptyCart');
+  var choice = document.getElementById("cards");
+  var result = choice.options[choice.selectedIndex].value; 
+  const userUID=firebase.auth().currentUser.uid;
+  const carts = firebase.firestore().collection('carts');
+  let mycarts = [];
+  var check=false;
+  var mycart;
+  var total=document.querySelector('.totalPrice').textContent;
+      carts.onSnapshot(snapshot => {
+        snapshot.forEach(doc => {
+        if(doc.id ==userUID){
+          check=true;
+          mycarts.push({...doc.data(), id: doc.id});
+          mycart= mycarts[0].mycart 
+          addTransaction({
+          mycart:mycart,
+          firstname:checkoutForm.firstname.value ,
+          lastname: checkoutForm.lastname.value,
+          address: checkoutForm.address.value,
+          email: checkoutForm.checkoutemail.value,
+          cardtype:result ,
+          ownerid: checkoutForm.ownerid.value,
+          ownername: checkoutForm.ownername.value,
+          cardnumber:checkoutForm.cardnumber.value,
+          cvc: checkoutForm.cvc.value,
+          expirydate: checkoutForm.expirydate.value,
+          totalPrice:total
+       })
+         .then(() =>{
+           checkoutForm.reset();
+           checkoutModal.classList.remove('open');
+            emptyCart({uid:userUID}).then(data=>{
+              console.log(data);
+              var i=0;
+              var prods=[];
+              var id;
+              var flag=true;
+              for(var key in mycart){
+                prods.push({Name:key,Amount:mycart[key]});
+              }
+              console.log(prods,"prods");
+              for(i=0;i<prods.length;i++){
+                updateProd(prods[i].Name,prods[i].Amount);
+              }
+                
+            })
+
+         //  checkoutForm.querySelector('.error').textContent = '';
+         })
+         .catch(error =>{
+          //checkoutForm.querySelector('.error').textContent = error.message;
+         });
+
+        }})
+      })
+      
+}
+
+function updateProd(prodName,amount){
+  var i=0;
+  const updateStock = firebase.functions().httpsCallable('updateStock');
+  var myAmount=0;
+  var prods=[];
+  var id;
+  var flag=true;
+  const ref = firebase.firestore().collection('products');
+  ref.onSnapshot(snapshot => {
+     snapshot.forEach(doc => {
+       if(doc.data().name==prodName&&flag==true){
+         flag=false;
+          id=doc.id;
+          myAmount = doc.data().amount - amount;
+          console.log({amount:myAmount,id:id},"dict");;
+          updateStock({amount:myAmount,id:id}).then(data=>{
+            console.log(data);
+          })
+        }
+
+});
+})
+}   
