@@ -166,6 +166,7 @@ firebase.auth().onAuthStateChanged(user => {
         console.log(getIdTokenResult.claims.admin);
         adminElements.forEach(item => item.style.display ='block');
         userElements.forEach(item => item.style.display ='none');
+        //console.log(userButton);
 
       }
       else{
@@ -174,6 +175,7 @@ firebase.auth().onAuthStateChanged(user => {
         //accountInfoLink.innerHTML =""
         adminElements.forEach(item => item.style.display ='none');
         userElements.forEach(item => item.style.display ='block');
+
 
     if(user.isStudent){
     const html= `

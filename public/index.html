@@ -109,8 +109,8 @@
       </div>
 <script>
 </script>
-      <input type="submit" value="submitApprove" onclick="return submitForm(this)" />
-      <input type="submit" value="submitDisapprove" onclick="return submitForm(this)" />
+      <input type="button" value="Submit approvals" onclick="submitApproved()" />
+      <input type="button" value="Submit disapprovals" onclick="submitDisapproved()" />
       <!--<button>Submit Disapprovals</button> -->
 
       <p class="error"></p>
@@ -165,6 +165,38 @@
     </div>
 
 
+ <div class="deliveries-modal">
+  <div class="modal" style="width: 400px;
+  padding: 30px;
+  margin: 100px auto;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0px 0px 8px rgba(0,0,0,0.1);
+  text-align: center;">
+   <form>
+    <section class="content" id="app4">
+      <h1>Deliveries</h1>
+      <div id="container" style="max-height:200px; overflow-y: auto;">
+      <ul class="deliveries-list" style="display:nline;"> 
+        <li v-for="delivery in transactions">
+          <p class="text">
+  <input type="checkbox" name="deliveriesCheckbox" :id="delivery.id"  :onclick=`updateDeliveriesDict("${delivery.id}")`>
+            {{ "Customer name: " +delivery.firstname}} <br>
+            {{ "Email address: " +delivery.email}} <br>
+            {{ "Delivery address: " +delivery.address}} <br>
+
+          </p>
+        </li>
+      </ul>
+   </section>
+          <button type="submit">Finish</button>
+          <p class="noDeliveries"></p>
+      </form>
+      </div>
+    </div>
+
+
+
 
  <div class="account-details" style="display:none">
   <div class="modal">
@@ -201,7 +233,7 @@
           <li> <a class="account-info">Account info</a> </li>
 
         </ul>
-    
+    <div class="user">
     <section class="content" id="app1">
       <h1>Products</h1>
       <ul class="product-list" style="display:inline;"> 
@@ -216,7 +248,7 @@
             {{"Expiration Date="+product.expiryDate }} <br>
             <img :src="product.url" alt="Snow" style="width:150px ;height:100px">
             <input type="number" class="amount" :id="product.name" placeholder="amount...">
-            <button type="button" class="add-to-cart" :id="product.name" :onclick=`addToCart("${product.name}")`
+            <button type="button" class="user-button" :id="product.name" :onclick=`addToCart("${product.name}")`
             >Add to Cart</button>
           </p>
         </li>
@@ -245,6 +277,68 @@
           <p class="errorDisplay"> </p>
         </div>
    </section>
+  </div>
+
+   <div class="admin">
+   <section class="content" id="app5">
+    <h1>Products</h1>
+    <ul class="product-list" style="display:inline;"> 
+      <li v-for="product in products">
+        <p class="text">
+          {{"Name = "+product.name}} <br>
+          {{"Manufacturer = "+product.manufacturer}} <br>
+          {{"Amount = "+product.amount}} <br>
+          {{"Price= "+product.price}} <br>
+          {{"Kashrut="+product.kashrut }} <br>
+          {{"Category="+product.category }} <br>
+          {{"Expiration Date="+product.expiryDate }} <br>
+          <img :src="product.url" alt="Snow" style="width:150px ;height:100px">
+          <button type="button" class="admin-button" :id="product.name" :onclick=`editProduct("${product.name}")`
+          >Edit</button>
+        </p>
+      </li>
+    </ul>
+
+
+    <div style="margin-right:auto; flex-direction:row;">      
+    <select id="sort">
+      <option value="manufacturer" selected>Manufacturer</option>
+      <option value="category">Category</option>
+      <option value="name">Name</option>
+      <option value="price">Price</option>
+    </select>
+      <button type="button" v-on:click="sortBy()">Sort By</button>
+
+      <select id="filter">
+        <option value="manufacturer" selected>Manufacturer</option>
+        <option value="category">Category</option>
+        <option value="name">Name</option>
+        <option value="price">Price</option>
+
+      </select>
+        
+        <button type="button" v-on:click="filterBy()">Filter By</button>
+        <input type="text" name="filter" id="filterText" placeholder="Enter filter criteria" style="width:30%;">
+        <p class="errorDisplay"> </p>
+      </div>
+ </section>
+</div>
+
+<div class="editProduct-modal">
+  <div class="modal" style="overflow-y: auto;">
+    <h2>Edit product</h2>
+   <form>
+     <input type="text" id="edit_amount" placeholder="amount...">
+     <input type="number" id="edit_price" placeholder="price...">
+     <button>Submit Product</button>
+      <p class="error"></p>
+   </form>
+ </div>
+</div>
+
+
+
+
 
     <!-- vue js -->
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
@@ -260,11 +354,14 @@
     <!-- initialize SDK  -->
     <script src="/__/firebase/init.js"></script>
 
+    <script src="js/deliveries.js"></script>
     <script src="js/app.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/products.js"></script>
     <script src="js/approve.js"></script>
     <script src="js/checkout.js"></script>
+    <script src="js/productsadmin.js"></script>
+
 
 
   </body>

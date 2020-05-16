@@ -11,37 +11,23 @@ const checkoutForm = document.querySelector('.checkout-modal form');
 const approveLink = document.querySelector('.approve-student');
 const approveModal = document.querySelector('.approve-modal');
 const approveForm = document.querySelector('.approve-modal form');
+const deliveriesLink = document.querySelector('.deliveries');
+const deliveriesModal = document.querySelector('.deliveries-modal');
+const deliveriesForm = document.querySelector('.deliveries-modal form');
+const editProductModal = document.querySelector('.editProduct-modal');
+const editProductForm = document.querySelector('.editProduct-modal form');
 
-//const submitApprove = document.querySelector('.approvesubmit');
-//const submitDisapprove = document.querySelector('.disapprovesubmit');
+var editProdName;
 var approvalDict ={};
+var deliveriesDict={};
 
-function submitForm (button)
-{
-  if (button.value == "Find")
-  {
-    /* open popup */
-    find();
-  }
-  else if (button.value == "Add")
-  {
-    /* stay in the same window */
-  } 
-
-  return false;
-}
-
-approveForm.addEventListener('submit', (e)=>{
-  var action = document.getElementsByName('action-submit');
-  console.log(action[0].value);
-  e.preventDefault(); 
-  console.log("?????????");
-  if ($_POST['action'] == 'submitApprove') {
-    const setStudentApproval = firebase.functions().httpsCallable('setStudentApproval');
+function submitApproved(){
+  var flag=false;
+  const setStudentApproval = firebase.functions().httpsCallable('setStudentApproval');
   console.log(approvalDict);
-  
   for(var key in approvalDict){
     if(approvalDict[key]==true){
+      flag=true;
       setStudentApproval({email:key}).then((data)=>{
         console.log(data, "did it work");
         approveForm.reset();
@@ -50,32 +36,69 @@ approveForm.addEventListener('submit', (e)=>{
       });
     }
     }
-    approvalDict={};
-} else if ($_POST['action'] == 'submitDisapprove') {
-    e.preventDefault();
-    console.log("?????????");
-    const setStudentDisapproval = firebase.functions().httpsCallable('setStudentDisapproval');
-    console.log(approvalDict);
-    for(var key in approvalDict){
-      if(approvalDict[key]==true){
-        setStudentDisapproval({email:key}).then((data)=>{
-          console.log(data, "did it work");
-          approveForm.reset();
-          approveModal.classList.remove('open');
-       
-        });
-      }
-      }
-      approvalDict={};
+    if(flag==false){
+    alert("Please choose at least one request to approve/disapprove ");
     }
-  })
-      
-  
+      approvalDict={};
+}
+function submitDisapproved(){
+  var flag=false;
+  const setStudentDisapproval = firebase.functions().httpsCallable('setStudentDisapproval');
+  for(var key in approvalDict){
+    if(approvalDict[key]==true){
+      flag=true;
+      setStudentDisapproval({email:key}).then((data)=>{
+        console.log(data, "did it work");
+        approveForm.reset();
+        approveModal.classList.remove('open');
+     
+      });
+    }
+    }
+    if(flag==false){
+      alert("Please choose at least one request to approve/disapprove ");
+      }
+    approvalDict={};
+  }
+deliveriesLink.addEventListener('click',() =>{
+ deliveriesModal.classList.add('open');
+});
     
+
+deliveriesModal.addEventListener('click', (e)=>{
+  if(e.target.classList.contains('deliveries-modal')){
+    deliveriesModal.classList.remove('open');
+    deliveriesForm.reset();
+
+  }
+});
+
+
+deliveriesForm.addEventListener('submit', (e)=>{
+  e.preventDefault(); 
+  const setDelivered = firebase.functions().httpsCallable('setDelivered');
+  var flag=false;
+  for(var key in deliveriesDict){
+    if(deliveriesDict[key]==true){
+      flag=true;
+      setDelivered({id:key}).then((data)=>{
+        console.log(data, "did it work");
+        deliveriesForm.reset();
+        deliveriesModal.classList.remove('open');
+     
+      });
+    }
+    }
+    if(flag==false){
+      alert("Please choose at least one transaction to deliver");
+    }
+    deliveriesDict={};
+  })
+
 checkoutLink.addEventListener('click',() =>{
   checkoutModal.classList.add('open');
 });
-//close product modal
+//close checkout modal
 checkoutModal.addEventListener('click', (e)=>{
   if(e.target.classList.contains('checkout-modal')){
     checkoutModal.classList.remove('open');
@@ -164,38 +187,16 @@ const showNotification = (message) => {
   }, 4000);
 };
 
-
-/*
-approveForm.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const setStudentApproval = firebase.functions().httpsCallable('setStudentApproval');
-  console.log(approvalDict);
-  for(var key in approvalDict){
-    if(approvalDict[key]==true){
-      console.log({email:key});
-      console.log(setStudentApproval);
-      setStudentApproval({email:key}).then((data)=>{
-        console.log(data, "did it work");
-        approveForm.reset();
-        approveModal.classList.remove('open');
-        approvalDict={};
-      })
-      // .then( ()=>{
-      //   approveForm.reset();
-      //   approveModal.classList.remove('open');
-      //   approveForm.querySelector('.error').textContent = '';
-      // })
-      // .catch(error =>{
-      //   approveForm.querySelector('.error').textContent = error.message;
-      // });
-    }
-  }
-});
-*/
 function updateApproveDict(email){
   var check=document.getElementById(email);
   approvalDict[email]=check.checked;
 
+}
+function updateDeliveriesDict(id){
+  console.log(id);
+  var check=document.getElementById(id);
+  deliveriesDict[id]=check.checked;
+  console.log(deliveriesDict);
 }
 function addToCart(str1){
   const addToMyCart = firebase.functions().httpsCallable('addToCart');
@@ -251,66 +252,8 @@ function addToCart(str1){
           
         }
       });
-    
-      /*
-      console.log({uid:userUID,mycart:mycarts[0].mycart});
-      const addToMyCart = firebase.functions().httpsCallable('addToCart');
-      addToMyCart({uid:userUID,mycart:mycarts[0].mycart}).then(data =>{
-        console.log(data,"check");
-      })
-      */
-
-//function wtf(data){
-  //console.log(data);
 }
-  /*
-  const ref = firebase.firestore().collection('carts');
-  const userUID=firebase.auth().currentUser.uid;
-  var check = document.getElementById(str1);
-  console.log(check.value);
-  ref.onSnapshot(snapshot => {
-let carts = [];
-snapshot.forEach(doc => {
-  if(doc.id==userUID)
-  carts.push({...doc.data(), id: doc.id});
-});
-status = carts[0].mycart;
-if(status === 'undefined'){}
-    console.log(status);
 
-
-});
- console.log("uid is ", userUID);
- console.log("before addToCartCloud");
- const addToCart= firebase.functions().httpsCallable('addToCart');
- console.log({uid:userUID});
- addToCart({uid:userUID})
- .then( () =>{
-   console.log("????");
- })
- */
-/*
- function checkValidAmount(prodName){
-   var check=false;
-  var amount = document.getElementById(prodName);
-  const prodAmount = firebase.firestore().collection('products');
-  prodAmount.onSnapshot(snapshot => {
-    snapshot.forEach(doc => {
-      if(doc.data().name==prodName){
-        if(Number(doc.data().amount)<Number(amount.value)){
-          check=true;
-          console.log("error");
-          return false;
-        }
-      }
-    })})
-    if(check==false)
-    {
-      addTo
-    }
-    
-  }
-*/
 function addTransactions(){
   const addTransaction = firebase.functions().httpsCallable('addTransaction');
   const emptyCart = firebase.functions().httpsCallable('emptyCart');
@@ -395,3 +338,54 @@ function updateProd(prodName,amount){
 });
 })
 }   
+
+function editProduct(prodName){
+  editProdName=prodName;
+  console.log("in edit");
+  editProductModal.classList.add('open');
+}
+editProductModal.addEventListener('click', (e)=>{
+  if(e.target.classList.contains('editProduct-modal')){
+    editProductModal.classList.remove('open');
+    editProductForm.reset();
+
+  }
+});
+function editInfo(){
+  var amount= document.getElementById("edit_amount").value;
+  var price= document.getElementById("edit_price").value;
+  console.log(amount);
+  var infoDict={};
+  if(amount!="")
+    infoDict["amount"]=Number(amount);
+  if(price!="")
+    infoDict["price"]=Number(price);
+
+  return infoDict;
+}
+  editProductForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const editProduct = firebase.functions().httpsCallable('editProduct');
+    let product = [];
+    const products = firebase.firestore().collection('products');
+    var flag=editInfo();
+    if(Object.keys(flag).length!=2)
+      alert("Please choose at least one credential to edit")
+      else{
+        products.onSnapshot(snapshot => {
+          snapshot.forEach(doc => {
+          if(doc.data().name ==editProdName){
+            product.push({...doc.data(), id: doc.id});
+            flag["id"]=doc.id;
+            editProduct(flag).then(data =>{
+              console.log("edited info");
+              editProductForm.reset();
+              editProductModal.classList.remove('open');
+            })
+            return;
+          }
+        })
+        });
+      }
+  })
+ 

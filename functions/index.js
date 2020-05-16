@@ -217,7 +217,36 @@ exports.setStudentApproval = functions.https.onCall(async (data, context) => {
   }
 });
 
-/*
+
+exports.setDelivered = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated'
+    );
+  }
+  
+  try {
+  const result =await  admin.firestore().collection('transactions').doc(data.id).update({delivered:true});
+    return "delivery updated";
+  } catch(e){
+    throw e
+  }
+});
+
+exports.editProduct = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated'
+    );
+  }
+  
+  try {
+  const result =await  admin.firestore().collection('products').doc(data.id).update({amount:data.amount,price:data.price});
+    return "product edited";
+  } catch(e){
+    throw e
+  }
+});
 exports.setStudentDisapproval = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
@@ -233,27 +262,6 @@ exports.setStudentDisapproval = functions.https.onCall(async (data, context) => 
     throw e
   }
 });
-/*
-exports.addToCart = functions.https.onCall((data) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated'
-          );
-  }
-  let myCurrentCart = firestore().collection('carts').doc(data.uid).mycart;
-  console.log(myCurrentCart);
-  return admin.firestore().collection('carts').doc(data.uid).add({
-    check: data.check
-  }).then(() => {
-    return 'cart added';
-}).catch(() => {
-    throw new functions.https.HttpsError(
-        'internal',
-        'cart not added'
-    );
-});
-});
-*/
 
 exports.addToCart = functions.https.onCall(async (data, context) => {
   if (!context.auth) {

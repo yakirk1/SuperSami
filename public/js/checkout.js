@@ -8,6 +8,10 @@ var app3 = new Vue({
       init(){
         console.log("in checkout mounted");
         firebase.auth().onAuthStateChanged(user => {
+          if(user){
+          user.getIdTokenResult().then(getIdTokenResult => {
+            user.admin= getIdTokenResult.claims.admin;
+            if(user.admin==false){
       const ref = firebase.firestore().collection('carts');
       ref.onSnapshot(snapshot => {
         let cart = [];
@@ -64,7 +68,8 @@ for(i=0 ; i< this.products.length;i++){
     });    
 
   })
-})
+}
+})}})
 
       }
     },
