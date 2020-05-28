@@ -1,3 +1,6 @@
+const transactionsLink = document.querySelector('.transactions');
+const transactionsModal = document.querySelector('.transactions-modal');
+const transactionsForm = document.querySelector('.transactions-modal form');
 const productModal = document.querySelector('.new-product');
 const productLink = document.querySelector('.add-product');
 //const addToCart = document.querySelector('.add-to-cart');
@@ -60,6 +63,20 @@ function submitDisapproved(){
       }
     approvalDict={};
   }
+  transactionsLink.addEventListener('click',() =>{
+    transactionsModal.classList.add('open');
+   });
+
+   transactionsModal.addEventListener('click', (e)=>{
+    if(e.target.classList.contains('transactions-modal')){
+      transactionsModal.classList.remove('open');
+      transactionsForm.reset();
+  
+    }
+  });
+  
+   
+   
 deliveriesLink.addEventListener('click',() =>{
  deliveriesModal.classList.add('open');
 });
@@ -260,6 +277,7 @@ function addTransactions(){
   var choice = document.getElementById("cards");
   var result = choice.options[choice.selectedIndex].value; 
   const userUID=firebase.auth().currentUser.uid;
+  const email =firebase.auth().currentUser.email;
   const carts = firebase.firestore().collection('carts');
   let mycarts = [];
   var check=false;
@@ -271,12 +289,25 @@ function addTransactions(){
           check=true;
           mycarts.push({...doc.data(), id: doc.id});
           mycart= mycarts[0].mycart 
+          console.log({
+            mycart:mycart,
+            firstname:checkoutForm.firstname.value ,
+            lastname: checkoutForm.lastname.value,
+            address: checkoutForm.address.value,
+            email: email,
+            cardtype:result ,
+            ownerid: checkoutForm.ownerid.value,
+            ownername: checkoutForm.ownername.value,
+            cardnumber:checkoutForm.cardnumber.value,
+            cvc: checkoutForm.cvc.value,
+            expirydate: checkoutForm.expirydate.value,
+            totalPrice:total})
           addTransaction({
           mycart:mycart,
           firstname:checkoutForm.firstname.value ,
           lastname: checkoutForm.lastname.value,
           address: checkoutForm.address.value,
-          email: checkoutForm.checkoutemail.value,
+          email: email,
           cardtype:result ,
           ownerid: checkoutForm.ownerid.value,
           ownername: checkoutForm.ownername.value,
@@ -288,7 +319,8 @@ function addTransactions(){
          .then(() =>{
            checkoutForm.reset();
            checkoutModal.classList.remove('open');
-            emptyCart({uid:userUID}).then(data=>{
+           emptyCart({uid:userUID}).then(data=>{
+
               console.log(data);
               var i=0;
               var prods=[];
@@ -301,9 +333,9 @@ function addTransactions(){
               for(i=0;i<prods.length;i++){
                 updateProd(prods[i].Name,prods[i].Amount);
               }
-                
+            alert("Purchase successful!")
             })
-
+            
          //  checkoutForm.querySelector('.error').textContent = '';
          })
          .catch(error =>{

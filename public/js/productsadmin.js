@@ -9,7 +9,6 @@ var app5 = new Vue({
       sortBy() {
         var choice = document.getElementById("sort");
         var result = choice.options[choice.selectedIndex].value; 
-        console.log(result);
         const ref = firebase.firestore().collection('products').orderBy(result, 'asc');
       ref.onSnapshot(snapshot => {
         let products = [];
@@ -24,7 +23,6 @@ var app5 = new Vue({
       var choice = document.getElementById("filter");
       var filterText = document.getElementById("filterText").value;
       var result = choice.options[choice.selectedIndex].value; 
-    //  console.log("Result is " +result +" filterText is "+ filterText.value);
       const ref = firebase.firestore().collection('products').orderBy(result, 'asc');
     ref.onSnapshot(snapshot => {
       let products = [];
@@ -47,7 +45,6 @@ var app5 = new Vue({
   }
     },
     mounted() {
-        console.log("in admin products");
       const ref = firebase.firestore().collection('products').orderBy('name', 'asc');
       ref.onSnapshot(snapshot => {
         let products = [];

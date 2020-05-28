@@ -24,7 +24,6 @@ checkBox.addEventListener('change', function() {
 });
 
  function isEmailValid(email){
-   console.log(email);
    email+="";
   index=email.indexOf("@");
 	var check=email.substring(index+1,email.length);
@@ -81,7 +80,6 @@ registerForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const email = registerForm.email.value;
   const password = registerForm.password.value;
-  console.log(url.value);
   try{
   if(isEmailValid(email) == true && isPassValid(password)==true){
     firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -96,9 +94,13 @@ registerForm.addEventListener('submit', (e) => {
       })
       .then(() =>{
         console.log('registered', user);
+        console.log(url.value)
+        if(url.value!="")
+        {
+          alert("You've signed up as a student! You must wait for admin approval before having discounted prices.");
+        }
         registerForm.reset();
         registerForm.querySelector('.error').textContent ="";
-
       });
     })
     .catch(error => {
@@ -121,7 +123,6 @@ loginForm.addEventListener('submit', (e) => {
 
       admin.auth().getUser(uid).then((userRecord) => {
         // The claims can be accessed on the user record.
-        console.log(userRecord.customClaims['admin']);
       });
       loginForm.reset();
     })
@@ -140,18 +141,6 @@ signOut.addEventListener('click', () => {
 firebase.auth().onAuthStateChanged(user => {
   const getStudentStatus = firebase.functions().httpsCallable('getStudentStatus');
   if (user) {
-    var status;
-    var ref = firebase.firestore().collection('users');
-    ref.onSnapshot(snapshot => {
-      let myuser = [];
-      snapshot.forEach(doc => {
-        if(doc.id==user.uid)
-        myuser.push({...doc.data(), id: doc.id});
-      });
-      status = myuser[0].isStudent;
-        // console.log(status);
-
-    });
     //console.log(status);
     //var myStatus=2;
     //var myUser={user:user};
@@ -163,32 +152,42 @@ firebase.auth().onAuthStateChanged(user => {
       user.admin= getIdTokenResult.claims.admin;
       if(user.admin){
         InfoLink.innerHTML = 'Admin';
-        console.log(getIdTokenResult.claims.admin);
         adminElements.forEach(item => item.style.display ='block');
         userElements.forEach(item => item.style.display ='none');
-        //console.log(userButton);
 
       }
       else{
+        var status;
+    var ref = firebase.firestore().collection('users');
+    ref.onSnapshot(snapshot => {
+      let myuser = [];
+      snapshot.forEach(doc => {
+        if(doc.id==user.uid)
+        myuser.push({...doc.data(), id: doc.id});
+      });
+      if(myuser.length!=0){
+      status = myuser[0].isStudent;
+        if(status){
+        const html= `
+        <div>Student</div>
+        `;
+          InfoLink.textContent ='Student';
 
+        }
+        else {
+          //var check=firebase.auth().currentUser;
+          //console.log(myStatus, 'check if works');
+          InfoLink.innerHTML="Regular user";
+        }
         //accountInfoLink.classList.style.display ='none';
         //accountInfoLink.innerHTML =""
         adminElements.forEach(item => item.style.display ='none');
         userElements.forEach(item => item.style.display ='block');
+      }
 
+        // console.log(status);
 
-    if(user.isStudent){
-    const html= `
-    <div>Student</div>
-    `;
-      
-      InfoLink.innerHTML =html;
-    }
-    else {
-      //var check=firebase.auth().currentUser;
-      //console.log(myStatus, 'check if works');
-      InfoLink.innerHTML="Regular user";
-    }
+    });
   }
     authWrapper.classList.remove('open');
     
@@ -198,6 +197,7 @@ firebase.auth().onAuthStateChanged(user => {
     authWrapper.classList.add('open');
     authModals[0].classList.add('active');
   }
+
 });
 
 //InfoLink.addEventListener('click', () => {

@@ -120,7 +120,7 @@
  
     <!-- checkout modal -->
     <div class="checkout-modal">
-      <div class="modal" style="width: 400px;
+      <div class="modal" style="width: 1200px ; height:800px";
       padding: 30px;
       margin: 100px auto;
       border-radius: 10px;
@@ -128,9 +128,32 @@
       box-shadow: 0px 0px 8px rgba(0,0,0,0.1);
       text-align: center;">
        <form>
+         <section style="max-height:800px; overflow-y:auto;">
+        <section class="content" id="app7">
+          <h1>Suggested products</h1>
+          <div id="container">
+            <ul class="suggestion-list" style="display:inline;"> 
+              <li v-for="suggestion in suggestions">
+                <p class="text">
+                  {{"Name = "+suggestion.name}} <br>
+                  {{"Manufacturer = "+suggestion.manufacturer}} <br>
+                  {{"Amount = "+suggestion.amount}} <br>
+                  {{"Price= "+suggestion.price}} <br>
+                  {{"Kashrut="+suggestion.kashrut }} <br>
+                  {{"Category="+suggestion.category }} <br>
+                  {{"Expiration Date="+suggestion.expiryDate }} <br>
+                  <img :src="suggestion.url" alt="Snow" style="width:150px ;height:100px">
+                  <input type="number" class="amount" :id="suggestion.name" placeholder="amount...">
+                  <button type="button" class="user-button" :id="suggestion.name" :onclick=`addToCart("${suggestion.name}")`
+                  >Add to Cart</button>
+                </p>
+              </li>
+            </ul>
+
+          </section>
         <section class="content" id="app3">
           <h1>Checkout</h1>
-          <div id="container" style="max-height:200px; overflow-y: auto;">
+          <div id="container">
             <ul class="cart-list" style="display:inline;"> 
               <li v-for="cart in products">
                 <p class="text">
@@ -142,10 +165,10 @@
             </ul>
             <p class="totalPrice">           
             </p>
+          </section>
             <input type="text" name="firstname" placeholder="First name...">
             <input type="text" name="lastname" placeholder="Last name...">
             <input type="text" name="address" placeholder="Address...">
-            <input type="text" name="checkoutemail" placeholder="Email...">
             <div style="margin-right:auto; flex-direction:row;">      
               <select id="cards">
                 <option value="isracard" selected>Isracard</option>
@@ -177,7 +200,7 @@
     <section class="content" id="app4">
       <h1>Deliveries</h1>
       <div id="container" style="max-height:200px; overflow-y: auto;">
-      <ul class="deliveries-list" style="display:nline;"> 
+      <ul class="deliveries-list" style="display:inline;"> 
         <li v-for="delivery in transactions">
           <p class="text">
   <input type="checkbox" name="deliveriesCheckbox" :id="delivery.id"  :onclick=`updateDeliveriesDict("${delivery.id}")`>
@@ -230,7 +253,7 @@
           <li class="admin" style="display:none;"><a class="approve-student">Approve Student</a> </li>
           <li class="user"> <a class="checkout"> Checkout</a> </li> 
           <li style="float:right;"> <a class="sign-out">Sign out</a> </li>
-          <li> <a class="account-info">Account info</a> </li>
+          <li> <a class="account-info" id="account-info">Account info</a> </li>
 
         </ul>
     <div class="user">
@@ -282,7 +305,7 @@
    <div class="admin">
    <section class="content" id="app5">
     <h1>Products</h1>
-    <ul class="product-list" style="display:inline;"> 
+    <ul class="product-list2" style="display:inline;"> 
       <li v-for="product in products">
         <p class="text">
           {{"Name = "+product.name}} <br>
@@ -338,7 +361,44 @@
 
 
 
+<div class="transactions-modal">
+  <div class="modal">
+   <form>
+    <section class="content" id="app6">
+      <h1>Transactions History</h1>
+      <div id="container" style="max-height:200px; overflow-y: auto;">
+      <ul class="transactions-list" style="display:inline;"> 
+        <li v-for="transaction in transactions">
+          <p class="text">
+            {{ "Customer name: " +transaction.firstname}} <br>
+            {{ "Email address: " +transaction.email}} <br>
+            {{ "Delivery address: " +transaction.address}} <br>
+            {{ "Total Price: " +transaction.totalPrice}} <br>
+            {{ "Delivered " +transaction.delivered}} <br>
 
+
+          </p>
+        </li>
+      </ul>
+      <div style="margin-right:auto; flex-direction:row;">      
+          <select id="transactionsFilter">
+            <option value="date" selected>Date</option>
+            <option value="category">Category</option>
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+  
+          </select>
+            
+            <button type="button" v-on:click="filterBy()">Filter By</button>
+            <input type="text" name="filter" id="transactionsFilterText" placeholder="Enter filter criteria" style="width:30%;">
+            <p class="errorDisplay"> </p>
+          </div>
+   </section>
+          <button type="submit">Finish</button>
+          <p class="noTransactions"></p>
+      </form>
+      </div>
+    </div>
 
     <!-- vue js -->
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
@@ -350,7 +410,6 @@
     <script src="/__/firebase/7.7.0/firebase-firestore.js"></script>
     <script src="/__/firebase/7.7.0/firebase-functions.js"></script>
     <script src="/__/firebase/7.7.0/firebase-storage.js"></script>
-    <script src="jquery-3.5.1.min.js"></script>
     <!-- initialize SDK  -->
     <script src="/__/firebase/init.js"></script>
 
@@ -361,6 +420,9 @@
     <script src="js/approve.js"></script>
     <script src="js/checkout.js"></script>
     <script src="js/productsadmin.js"></script>
+    <script src="js/transactions.js"></script>
+    <script src="js/suggestion.js"></script>
+
 
 
 

@@ -55,7 +55,6 @@ exports.emptyCart = functions.https.onCall((data,context)=>{
   return db.collection('carts').doc(data.uid).delete();
 
 })
-
 //add new product
 exports.addProduct = functions.https.onCall((data, context) => {
   console.log("in addProduct cloud function");
@@ -300,16 +299,16 @@ exports.addToCart = functions.https.onCall(async (data, context) => {
   }
   return admin.firestore().collection('transactions').add({
     mycart:data.mycart,
-    firstname:data.firstname ,
-    lastname: data.lastname,
-    address: data.address,
-    email: data.email,
-    cardtype:data.cardtype ,
-    ownerid: data.ownerid,
-    ownername: data.ownername,
+    firstname:data.firstname,
+    lastname:data.lastname,
+    address:data.address,
+    email:data.email,
+    cardtype:data.cardtype,
+    ownerid:data.ownerid,
+    ownername:data.ownername,
     cardnumber:data.cardnumber,
-    cvc: data.cvc,
-    expirydate: data.expirydate,
+    cvc:data.cvc,
+    expirydate:data.expirydate,
     delivered:false,
     totalPrice:data.totalPrice
 }).then(() => {
