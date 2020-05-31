@@ -120,7 +120,7 @@
  
     <!-- checkout modal -->
     <div class="checkout-modal">
-      <div class="modal" style="width: 1200px ; height:800px";
+      <div class="modal" style="width: 1500px ; height:800px";
       padding: 30px;
       margin: 100px auto;
       border-radius: 10px;
@@ -144,7 +144,7 @@
                   {{"Expiration Date="+suggestion.expiryDate }} <br>
                   <img :src="suggestion.url" alt="Snow" style="width:150px ;height:100px">
                   <input type="number" class="amount" :id="suggestion.name" placeholder="amount...">
-                  <button type="button" class="user-button" :id="suggestion.name" :onclick=`addToCart("${suggestion.name}")`
+                  <button type="button" @click="init" class="user-button" :id="suggestion.name" :onclick=`addToCart("${suggestion.name}")`
                   >Add to Cart</button>
                 </p>
               </li>
@@ -180,7 +180,7 @@
               <input type="text" name="cardnumber" placeholder="Card number...">
               <input type="text" name="cvc" placeholder="CVC...">
               <input type="text" name="expirydate" placeholder="Expiry date...">
-              <button type="button" onclick="addTransactions()">Finish</button>
+              <button type="button" @click="init" onclick="addTransactions()">Finish</button>
             </div>
           </section>
           </form>
