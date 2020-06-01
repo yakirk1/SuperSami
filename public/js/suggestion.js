@@ -54,7 +54,7 @@ var app7 = new Vue({
 
             })
         },
-        BibiZevel(email){
+        BibiZevel(mycart,status,email){
           console.log("in bibi zevel")
           var ref = firebase.firestore().collection('transactions');
           ref.onSnapshot(snapshot => {
@@ -89,6 +89,8 @@ var app7 = new Vue({
                               
               );
               console.log(JSON.stringify(this.potentialSuggestions));
+        })
+              /*
               if(Object.keys(this.potentialSuggestions).length<3){
 
               console.log(JSON.stringify(this.potentialSuggestions),"potential");
@@ -125,7 +127,19 @@ var app7 = new Vue({
             })
               }
           })
-          console.log("going out of bibi zevel")
+
+*/ 
+         console.log("going out of bibi zevel");
+         console.log(JSON.stringify(this.potentialSuggestions),"potentialsug");
+         for(var key in mycart){
+          for(var key2 in this.potentialSuggestions){
+              if(key==key2){
+               delete this.potentialSuggestions[key];
+              }
+          } 
+       }
+         this.updateKeys(mycart,status,email);
+          //this.finalizeSuggestions(mycart,status,email);  
 
         },
         finalizeSuggestions(mycart,status,email){
@@ -151,9 +165,9 @@ var app7 = new Vue({
                } 
             }
             console.log(this.potentialSuggestions,"after deleting");
-            this.updateKeys(status,email);
+            this.updateKeys(mycart,status,email);
         },
-        updateKeys(status,email){
+        updateKeys(mycart,status,email){
           /*
             var keys = [];
             for(var key in this.potentialSuggestions) { keys.push(key) }
@@ -172,21 +186,38 @@ var app7 = new Vue({
             keys.sort(function(first, second) {
               return second[1] - first[1];
             });
-
+            console.log(JSON.stringify(keys,"179 keys"));
+            /*
             if(Object.keys(this.potentialSuggestions).length<3){
              // console.log(copy2,"copy2");
               console.log("kol ma she ba leha")
               console.log(JSON.stringify(this.potentialSuggestions));
 
             this.BibiZevel(email);
+            
 }
           else{
+            */
             const refs = firebase.firestore().collection('products').orderBy('name', 'asc');
 
             refs.onSnapshot(snapshot => {
               let suggestions = [];
+              var count=0;
               var i=0;
+              console.log(JSON.stringify(keys),"keys");
+              if(keys.length<3){
+               
+                if(count==0){
+                this.BibiZevel(mycart,status,email);
+                count++;  
+              }
+
+               console.log(JSON.stringify(this.potentialSuggestions),"potentialsug");
+
+              }
+              else{
               snapshot.forEach(doc => {
+
                 for(i=0;i<3;i++){
                 if(doc.data().amount>0 && doc.data().name==keys[i][0]){
                 suggestions[i]={...doc.data(),id:doc.id};
@@ -197,10 +228,11 @@ var app7 = new Vue({
             }
             
           });
+        }
           console.log("??");
           this.suggestions = suggestions;
             });
-          }
+          //}
         },
         init(){
           setTimeout(() => { this.potentialSuggestions={};
@@ -268,8 +300,8 @@ var app7 = new Vue({
     
               else{
               console.log(mycart[0]);
-                this.BibiZevel(user.email);
-                console.log(this.potentialSuggestions,"after BibiZevel");
+                this.BibiZevel(mycart,status,user.email);
+                console.log(JSON.stringify(this.potentialSuggestions),"after BibiZevel");
     
                 var ref = firebase.firestore().collection('products');
                 ref.onSnapshot(snapshot => {
@@ -281,7 +313,7 @@ var app7 = new Vue({
                     })
                 }
                 console.log(this.potentialSuggestions,"check potential bibizevel");
-                this.updateKeys(status);
+                this.updateKeys(mycart,status,user.email);
     
     
     

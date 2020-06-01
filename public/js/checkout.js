@@ -63,6 +63,7 @@ for(i=0 ; i< this.products.length;i++){
       }
     },
     mounted() {  
+      
       this.init();
     }
 
